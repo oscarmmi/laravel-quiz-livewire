@@ -69,7 +69,35 @@ new #[Layout('layouts.guest')] class extends Component
 
             <x-primary-button class="ms-3">
                 {{ __('Log in') }}
-            </x-primary-button>
+            </x-primary-button>            
+        </div>
+
+        <div class="mt-6">
+            <div class="relative mb-6">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm uppercase">
+                    <span class="bg-white px-2 text-gray-500">Or continue with</span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <a class="inline-flex w-full items-center justify-center mb-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 disabled:opacity-25"
+                    href="{{ route('social.redirect', 'github') }}">
+                    GitHub
+                </a>
+
+                <a class="inline-flex w-full items-center justify-center mb-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 disabled:opacity-25"
+                    href="{{ route('social.redirect', 'google') }}">
+                    Google
+                </a>
+
+                <a class="inline-flex w-full items-center justify-center mb-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-gray-700 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50 disabled:opacity-25"
+                    href="{{ route('social.redirect', 'facebook') }}">
+                    Facebook
+                </a>
+            </div>
         </div>
     </form>
 </div>

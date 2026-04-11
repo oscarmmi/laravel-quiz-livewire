@@ -19,6 +19,10 @@ Route::get('admin/users', \App\Livewire\Admin\ManageAdmins::class)
     ->middleware(['auth'])
     ->name('admin.users');
 
+Route::get('admin/questions', \App\Livewire\Admin\ManageQuestions::class)
+    ->middleware(['auth'])
+    ->name('admin.questions');
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');

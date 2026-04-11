@@ -44,6 +44,7 @@ This is a comprehensive quiz application where users can participate in quizzes,
 * Prevent N+1 queries by using `with()` for eager loading when fetching relations (e.g., fetching a quiz with its questions and options).
 
 ### Routing
+* STRICT RULE: **Never write business logic or database queries inside routing files** (`web.php` or `api.php`). Route closures are strictly forbidden for data fetching. Always route to a generic Controller or Single-Action Controller.
 * Group routes by middleware and common prefixes (e.g., `admin` prefix for admin routes).
 * Use resource routes where possible instead of defining each CRUD route manually.
 

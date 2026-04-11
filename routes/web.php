@@ -15,6 +15,10 @@ Route::get('leaderboard', Leaderboard::class)
     ->middleware(['auth'])
     ->name('leaderboard');
 
+Route::get('admin/users', \App\Livewire\Admin\ManageAdmins::class)
+    ->middleware(['auth'])
+    ->name('admin.users');
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');

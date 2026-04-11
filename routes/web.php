@@ -27,6 +27,10 @@ Route::get('admin/quizzes', \App\Livewire\Admin\ManageQuizzes::class)
     ->middleware(['auth'])
     ->name('admin.quizzes');
 
+Route::get('admin/tests', \App\Livewire\Admin\ManageTests::class)
+    ->middleware(['auth'])
+    ->name('admin.tests');
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');

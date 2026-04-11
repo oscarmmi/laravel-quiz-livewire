@@ -3,12 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\HomeController;
+use App\Livewire\Leaderboard;
 
 Route::view('/', 'welcome');
 
 Route::get('dashboard', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('leaderboard', Leaderboard::class)
+    ->middleware(['auth'])
+    ->name('leaderboard');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])

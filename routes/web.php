@@ -23,6 +23,10 @@ Route::get('admin/questions', \App\Livewire\Admin\ManageQuestions::class)
     ->middleware(['auth'])
     ->name('admin.questions');
 
+Route::get('admin/quizzes', \App\Livewire\Admin\ManageQuizzes::class)
+    ->middleware(['auth'])
+    ->name('admin.quizzes');
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');

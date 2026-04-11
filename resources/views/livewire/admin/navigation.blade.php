@@ -65,6 +65,9 @@ new class extends Component
                                 <x-dropdown-link :href="route('admin.questions')" wire:navigate>
                                     {{ __('Questions') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.quizzes')" wire:navigate>
+                                    {{ __('Quizzes') }}
+                                </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
@@ -134,6 +137,9 @@ new class extends Component
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.questions')" :active="request()->routeIs('admin.questions')" class="pl-8" wire:navigate>
                         {{ __('Questions') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.quizzes')" :active="request()->routeIs('admin.quizzes')" class="pl-8" wire:navigate>
+                        {{ __('Quizzes') }}
                     </x-responsive-nav-link>
                 </div>
             </div>

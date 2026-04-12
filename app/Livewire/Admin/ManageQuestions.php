@@ -15,6 +15,8 @@ class ManageQuestions extends Component
 
     public $search = '';
 
+    public $isFormOpen = false;
+
     // Form fields
     public $questionId = null;
     public $question_text = '';
@@ -37,7 +39,7 @@ class ManageQuestions extends Component
     public function create()
     {
         $this->resetForm();
-        $this->dispatch('open-modal', 'question-form');
+        $this->isFormOpen = true;
     }
 
     public function edit(Question $question)
@@ -50,7 +52,13 @@ class ManageQuestions extends Component
         $this->more_info_link = $question->more_info_link;
         $this->category_id = $question->category_id;
         
-        $this->dispatch('open-modal', 'question-form');
+        $this->isFormOpen = true;
+    }
+
+    public function closeForm()
+    {
+        $this->isFormOpen = false;
+        $this->resetForm();
     }
 
     public function save()
@@ -74,8 +82,7 @@ class ManageQuestions extends Component
             ]
         );
 
-        $this->dispatch('close-modal', 'question-form');
-        $this->resetForm();
+        $this->closeForm();
     }
 
     public function delete($id)

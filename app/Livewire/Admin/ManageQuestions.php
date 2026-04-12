@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Question;
 use App\Models\Category;
+use App\Models\Question;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app')]
 class ManageQuestions extends Component
@@ -17,15 +17,20 @@ class ManageQuestions extends Component
 
     // Form fields
     public $questionId = null;
+
     public $question_text = '';
+
     public $code_snippet = '';
+
     public $answer_explanation = '';
+
     public $more_info_link = '';
+
     public $category_id = '';
 
     public function mount()
     {
-        abort_if(!auth()->user()->is_admin, 403, 'Unauthorized action.');
+        abort_if(! auth()->user()->is_admin, 403, 'Unauthorized action.');
     }
 
     public function resetForm()
@@ -49,7 +54,7 @@ class ManageQuestions extends Component
         $this->answer_explanation = $question->answer_explanation;
         $this->more_info_link = $question->more_info_link;
         $this->category_id = $question->category_id;
-        
+
         $this->dispatch('open-modal', 'question-form');
     }
 
@@ -80,7 +85,7 @@ class ManageQuestions extends Component
 
     public function delete($id)
     {
-        abort_if(!auth()->user()->is_admin, 403);
+        abort_if(! auth()->user()->is_admin, 403);
         Question::findOrFail($id)->delete();
         $this->dispatch('close-modal', 'confirm-question-delete');
     }
@@ -90,7 +95,7 @@ class ManageQuestions extends Component
         $questions = Question::query()
             ->with('category')
             ->when($this->search, function ($query) {
-                $query->where('question_text', 'like', '%' . $this->search . '%');
+                $query->where('question_text', 'like', '%'.$this->search.'%');
             })
             ->latest()
             ->paginate(10);

@@ -23,7 +23,7 @@ class ManageQuizzes extends Component
     public $published = false;
     public $public = false;
 
-    public function mount()
+    public function boot()
     {
         abort_if(!auth()->user()->is_admin, 403, 'Unauthorized action.');
     }
@@ -85,7 +85,6 @@ class ManageQuizzes extends Component
 
     public function delete($id)
     {
-        abort_if(!auth()->user()->is_admin, 403);
         Quiz::findOrFail($id)->delete();
         $this->dispatch('close-modal', 'confirm-quiz-delete');
     }

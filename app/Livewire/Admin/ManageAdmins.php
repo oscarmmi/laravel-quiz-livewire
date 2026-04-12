@@ -14,15 +14,13 @@ class ManageAdmins extends Component
 
     public $search = '';
 
-    public function mount()
+    public function boot()
     {
         abort_if(!auth()->user()->is_admin, 403, 'Unauthorized action.');
     }
 
     public function toggleAdmin($userId)
     {
-        abort_if(!auth()->user()->is_admin, 403);
-        
         $user = User::findOrFail($userId);
 
         // Prevent removing their own admin status by accident

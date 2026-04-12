@@ -24,7 +24,7 @@ class ManageTests extends Component
     public $ip_address = '';
     public $time_spent = '';
 
-    public function mount()
+    public function boot()
     {
         abort_if(!auth()->user()->is_admin, 403, 'Unauthorized action.');
     }
@@ -81,7 +81,6 @@ class ManageTests extends Component
 
     public function delete($id)
     {
-        abort_if(!auth()->user()->is_admin, 403);
         Test::findOrFail($id)->delete();
         $this->dispatch('close-modal', 'confirm-test-delete');
     }

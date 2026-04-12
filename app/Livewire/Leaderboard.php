@@ -2,10 +2,10 @@
 
 namespace App\Livewire;
 
-use App\Models\Test;
 use App\Models\Quiz;
-use Livewire\Component;
+use App\Models\Test;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.app')]
 class Leaderboard extends Component
@@ -33,7 +33,7 @@ class Leaderboard extends Component
 
         return view('livewire.leaderboard', [
             'tests' => $tests,
-            'quizzes' => $quizzes
+            'quizzes' => $quizzes,
         ]);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quiz;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -17,7 +16,7 @@ class HomeController extends Controller
             ->has('questions')
             ->withCount('questions')
             ->get();
-            
+
         return view('dashboard', compact('quizzes'));
     }
 }

@@ -4,9 +4,9 @@ namespace App\Livewire\Admin;
 
 use App\Models\Quiz;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app')]
 class ManageQuizzes extends Component
@@ -17,15 +17,20 @@ class ManageQuizzes extends Component
 
     // Form fields
     public $quizId = null;
+
     public $title = '';
+
     public $slug = '';
+
     public $description = '';
+
     public $published = false;
+
     public $public = false;
 
     public function mount()
     {
-        abort_if(!auth()->user()->is_admin, 403, 'Unauthorized action.');
+        abort_if(! auth()->user()->is_admin, 403, 'Unauthorized action.');
     }
 
     public function resetForm()
@@ -49,7 +54,7 @@ class ManageQuizzes extends Component
         $this->description = $quiz->description;
         $this->published = $quiz->published;
         $this->public = $quiz->public;
-        
+
         $this->dispatch('open-modal', 'quiz-form');
     }
 
@@ -62,7 +67,7 @@ class ManageQuizzes extends Component
 
         $this->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|alpha_dash|max:255|unique:quizzes,slug,' . $this->quizId,
+            'slug' => 'required|string|alpha_dash|max:255|unique:quizzes,slug,'.$this->quizId,
             'description' => 'nullable|string',
             'published' => 'boolean',
             'public' => 'boolean',
@@ -85,7 +90,7 @@ class ManageQuizzes extends Component
 
     public function delete($id)
     {
-        abort_if(!auth()->user()->is_admin, 403);
+        abort_if(! auth()->user()->is_admin, 403);
         Quiz::findOrFail($id)->delete();
         $this->dispatch('close-modal', 'confirm-quiz-delete');
     }
@@ -93,10 +98,7 @@ class ManageQuizzes extends Component
     public function render()
     {
         $quizzes = Quiz::query()
-            ->when($this->search, function ($query) {
-                $query->where('title', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%');
-            })
+            ->search($this->search)
             ->withCount('questions')
             ->latest()
             ->paginate(10);

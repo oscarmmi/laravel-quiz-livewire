@@ -31,4 +31,3 @@ class SocialLoginController extends Controller
         return redirect()->intended('/dashboard');
     }
 }
-

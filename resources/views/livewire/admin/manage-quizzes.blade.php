@@ -76,36 +76,36 @@
     <x-modal name="quiz-form" focusable maxWidth="2xl">
         <form wire:submit.prevent="save" class="p-6">
             <h2 class="text-lg font-medium text-gray-900 mb-4">
-                {{ $quizId ? 'Edit Quiz' : 'Create New Quiz' }}
+                {{ $form->quizId ? 'Edit Quiz' : 'Create New Quiz' }}
             </h2>
 
             <div class="space-y-4">
                 <div>
                     <x-input-label for="title" value="Title" />
-                    <x-text-input wire:model="title" id="title" type="text" class="mt-1 block w-full" required />
-                    <x-input-error :messages="$errors->get('title')" class="mt-2" />
+                    <x-text-input wire:model="form.title" id="title" type="text" class="mt-1 block w-full" required />
+                    <x-input-error :messages="$errors->get('form.title')" class="mt-2" />
                 </div>
 
                 <div>
                     <x-input-label for="slug" value="Slug (Auto-generates if empty)" />
-                    <x-text-input wire:model="slug" id="slug" type="text" class="mt-1 block w-full text-sm font-mono" />
-                    <x-input-error :messages="$errors->get('slug')" class="mt-2" />
+                    <x-text-input wire:model="form.slug" id="slug" type="text" class="mt-1 block w-full text-sm font-mono" />
+                    <x-input-error :messages="$errors->get('form.slug')" class="mt-2" />
                 </div>
 
                 <div>
                     <x-input-label for="description" value="Description" />
-                    <textarea wire:model="description" id="description" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
-                    <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                    <textarea wire:model="form.description" id="description" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                    <x-input-error :messages="$errors->get('form.description')" class="mt-2" />
                 </div>
 
                 <div class="flex items-center gap-6 mt-4">
                     <label for="public" class="inline-flex items-center cursor-pointer">
-                        <input id="public" type="checkbox" wire:model="public" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                        <input id="public" type="checkbox" wire:model="form.public" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                         <span class="ms-2 text-sm text-gray-600">{{ __('Public') }}</span>
                     </label>
 
                     <label for="published" class="inline-flex items-center cursor-pointer">
-                        <input id="published" type="checkbox" wire:model="published" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                        <input id="published" type="checkbox" wire:model="form.published" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                         <span class="ms-2 text-sm text-gray-600">{{ __('Published') }}</span>
                     </label>
                 </div>

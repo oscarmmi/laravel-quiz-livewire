@@ -21,5 +21,4 @@ class AdminMiddleware
 
         return redirect('/dashboard')->with('error', 'No tienes permisos de administrador.');
     }
-
 }

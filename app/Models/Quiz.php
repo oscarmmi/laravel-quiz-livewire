@@ -20,7 +20,7 @@ class Quiz extends Model
 
     protected $casts = [
         'published' => 'boolean',
-        'public'    => 'boolean',
+        'public' => 'boolean',
     ];
 
     public function getRouteKeyName()

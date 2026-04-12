@@ -23,7 +23,7 @@ class ManageQuestions extends Component
     public $more_info_link = '';
     public $category_id = '';
 
-    public function mount()
+    public function boot()
     {
         abort_if(!auth()->user()->is_admin, 403, 'Unauthorized action.');
     }
@@ -80,7 +80,6 @@ class ManageQuestions extends Component
 
     public function delete($id)
     {
-        abort_if(!auth()->user()->is_admin, 403);
         Question::findOrFail($id)->delete();
         $this->dispatch('close-modal', 'confirm-question-delete');
     }

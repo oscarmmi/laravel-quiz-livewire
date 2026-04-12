@@ -1,9 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\HomeController;
+use App\Livewire\Admin\ManageAdmins;
+use App\Livewire\Admin\ManageQuestions;
+use App\Livewire\Admin\ManageQuizzes;
+use App\Livewire\Admin\ManageTests;
 use App\Livewire\Leaderboard;
+use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
@@ -15,19 +19,19 @@ Route::get('leaderboard', Leaderboard::class)
     ->middleware(['auth'])
     ->name('leaderboard');
 
-Route::get('admin/users', \App\Livewire\Admin\ManageAdmins::class)
+Route::get('admin/users', ManageAdmins::class)
     ->middleware(['auth'])
     ->name('admin.users');
 
-Route::get('admin/questions', \App\Livewire\Admin\ManageQuestions::class)
+Route::get('admin/questions', ManageQuestions::class)
     ->middleware(['auth'])
     ->name('admin.questions');
 
-Route::get('admin/quizzes', \App\Livewire\Admin\ManageQuizzes::class)
+Route::get('admin/quizzes', ManageQuizzes::class)
     ->middleware(['auth'])
     ->name('admin.quizzes');
 
-Route::get('admin/tests', \App\Livewire\Admin\ManageTests::class)
+Route::get('admin/tests', ManageTests::class)
     ->middleware(['auth'])
     ->name('admin.tests');
 

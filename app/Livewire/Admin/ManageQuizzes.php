@@ -15,6 +15,8 @@ class ManageQuizzes extends Component
 
     public $search = '';
 
+    public $isFormOpen = false;
+
     // Form fields
     public $quizId = null;
     public $title = '';
@@ -37,7 +39,7 @@ class ManageQuizzes extends Component
     public function create()
     {
         $this->resetForm();
-        $this->dispatch('open-modal', 'quiz-form');
+        $this->isFormOpen = true;
     }
 
     public function edit(Quiz $quiz)
@@ -50,7 +52,13 @@ class ManageQuizzes extends Component
         $this->published = $quiz->published;
         $this->public = $quiz->public;
         
-        $this->dispatch('open-modal', 'quiz-form');
+        $this->isFormOpen = true;
+    }
+
+    public function closeForm()
+    {
+        $this->isFormOpen = false;
+        $this->resetForm();
     }
 
     public function save()
@@ -79,8 +87,7 @@ class ManageQuizzes extends Component
             ]
         );
 
-        $this->dispatch('close-modal', 'quiz-form');
-        $this->resetForm();
+        $this->closeForm();
     }
 
     public function delete($id)

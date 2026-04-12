@@ -16,6 +16,8 @@ class ManageTests extends Component
 
     public $search = '';
 
+    public $isFormOpen = false;
+
     // Form fields
     public $testId = null;
     public $user_id = '';
@@ -38,7 +40,7 @@ class ManageTests extends Component
     public function create()
     {
         $this->resetForm();
-        $this->dispatch('open-modal', 'test-form');
+        $this->isFormOpen = true;
     }
 
     public function edit(Test $test)
@@ -51,7 +53,13 @@ class ManageTests extends Component
         $this->ip_address = $test->ip_address;
         $this->time_spent = $test->time_spent;
         
-        $this->dispatch('open-modal', 'test-form');
+        $this->isFormOpen = true;
+    }
+
+    public function closeForm()
+    {
+        $this->isFormOpen = false;
+        $this->resetForm();
     }
 
     public function save()
@@ -75,8 +83,7 @@ class ManageTests extends Component
             ]
         );
 
-        $this->dispatch('close-modal', 'test-form');
-        $this->resetForm();
+        $this->closeForm();
     }
 
     public function delete($id)

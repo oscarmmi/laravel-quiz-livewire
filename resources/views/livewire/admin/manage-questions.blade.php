@@ -7,116 +7,118 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <x-text-input wire:model.live.debounce.300ms="search" placeholder="Search questions..." class="w-full sm:w-1/2" />
-                    <x-primary-button wire:click="create">
-                        {{ __('Add New Question') }}
-                    </x-primary-button>
+            @if(!$isFormOpen)
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                    <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <x-text-input wire:model.live.debounce.300ms="search" placeholder="Search questions..." class="w-full sm:w-1/2" />
+                        <x-primary-button wire:click="create">
+                            {{ __('Add New Question') }}
+                        </x-primary-button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Question</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse($questions as $question)
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                                        <div class="line-clamp-2">{{ $question->question_text }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $question->category ? $question->category->name : 'N/A' }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button wire:click="edit({{ $question->id }})" class="text-indigo-600 hover:text-indigo-900 focus:outline-none transition duration-150 ease-in-out mr-4">
-                                            Edit
-                                        </button>
-                                        <button x-data x-on:click="$dispatch('open-delete-modal', {{ $question->id }})" class="text-red-600 hover:text-red-900 focus:outline-none transition duration-150 ease-in-out">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            @empty
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <td colspan="3" class="px-6 py-10 text-center text-gray-500">No questions found.</td>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Question</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                    
-                    @if($questions->hasPages())
-                        <div class="p-4 border-t border-gray-200">
-                            {{ $questions->links() }}
-                        </div>
-                    @endif
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($questions as $question)
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                                            <div class="line-clamp-2">{{ $question->question_text }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $question->category ? $question->category->name : 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <button wire:click="edit({{ $question->id }})" class="text-indigo-600 hover:text-indigo-900 focus:outline-none transition duration-150 ease-in-out mr-4">
+                                                Edit
+                                            </button>
+                                            <button x-data x-on:click="$dispatch('open-delete-modal', {{ $question->id }})" class="text-red-600 hover:text-red-900 focus:outline-none transition duration-150 ease-in-out">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-10 text-center text-gray-500">No questions found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+
+                        @if($questions->hasPages())
+                            <div class="p-4 border-t border-gray-200">
+                                {{ $questions->links() }}
+                            </div>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @else
+                <!-- Form View -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <form wire:submit.prevent="save" class="p-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-4">
+                            {{ $questionId ? 'Edit Question' : 'Create New Question' }}
+                        </h2>
+
+                        <div class="space-y-4">
+                            <div>
+                                <x-input-label for="category_id" value="Category" />
+                                <select wire:model="category_id" id="category_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="">Select a Category</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('category_id')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="question_text" value="Question Text" />
+                                <textarea wire:model="question_text" id="question_text" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                                <x-input-error :messages="$errors->get('question_text')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="code_snippet" value="Code Snippet (Optional)" />
+                                <textarea wire:model="code_snippet" id="code_snippet" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm font-mono text-sm shadow-inner bg-gray-50"></textarea>
+                                <x-input-error :messages="$errors->get('code_snippet')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="answer_explanation" value="Answer Explanation (Optional)" />
+                                <textarea wire:model="answer_explanation" id="answer_explanation" rows="2" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                                <x-input-error :messages="$errors->get('answer_explanation')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="more_info_link" value="More Info Link (Optional)" />
+                                <x-text-input wire:model="more_info_link" id="more_info_link" type="url" class="mt-1 block w-full" placeholder="https://" />
+                                <x-input-error :messages="$errors->get('more_info_link')" class="mt-2" />
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex justify-end">
+                            <x-secondary-button wire:click="closeForm">
+                                {{ __('Cancel') }}
+                            </x-secondary-button>
+
+                            <x-primary-button class="ms-3">
+                                {{ __('Save Question') }}
+                            </x-primary-button>
+                        </div>
+                    </form>
+                </div>
+            @endif
         </div>
     </div>
-
-    <!-- Form Modal -->
-    <x-modal name="question-form" focusable maxWidth="2xl">
-        <form wire:submit.prevent="save" class="p-6">
-            <h2 class="text-lg font-medium text-gray-900 mb-4">
-                {{ $questionId ? 'Edit Question' : 'Create New Question' }}
-            </h2>
-
-            <div class="space-y-4">
-                <div>
-                    <x-input-label for="category_id" value="Category" />
-                    <select wire:model="category_id" id="category_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                        <option value="">Select a Category</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                    </select>
-                    <x-input-error :messages="$errors->get('category_id')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="question_text" value="Question Text" />
-                    <textarea wire:model="question_text" id="question_text" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
-                    <x-input-error :messages="$errors->get('question_text')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="code_snippet" value="Code Snippet (Optional)" />
-                    <textarea wire:model="code_snippet" id="code_snippet" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm font-mono text-sm shadow-inner bg-gray-50"></textarea>
-                    <x-input-error :messages="$errors->get('code_snippet')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="answer_explanation" value="Answer Explanation (Optional)" />
-                    <textarea wire:model="answer_explanation" id="answer_explanation" rows="2" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
-                    <x-input-error :messages="$errors->get('answer_explanation')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="more_info_link" value="More Info Link (Optional)" />
-                    <x-text-input wire:model="more_info_link" id="more_info_link" type="url" class="mt-1 block w-full" placeholder="https://" />
-                    <x-input-error :messages="$errors->get('more_info_link')" class="mt-2" />
-                </div>
-            </div>
-
-            <div class="mt-6 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-
-                <x-primary-button class="ms-3">
-                    {{ __('Save Question') }}
-                </x-primary-button>
-            </div>
-        </form>
-    </x-modal>
 
     <!-- Delete Confirmation Modal Alpine Wrapper -->
     <div x-data="{ questionIdToDelete: null }" @open-delete-modal.window="questionIdToDelete = $event.detail; $dispatch('open-modal', 'confirm-question-delete')">

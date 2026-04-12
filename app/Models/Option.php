@@ -18,7 +18,7 @@ class Option extends Model
     ];
 
     protected $casts = [
-        'correct' => 'boolean'
+        'correct' => 'boolean',
     ];
 
     public function question(): BelongsTo

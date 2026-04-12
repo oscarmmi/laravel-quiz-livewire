@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Quiz;
 use App\Models\Test;
 use App\Models\User;
-use App\Models\Quiz;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app')]
 class ManageTests extends Component
@@ -18,15 +18,20 @@ class ManageTests extends Component
 
     // Form fields
     public $testId = null;
+
     public $user_id = '';
+
     public $quiz_id = '';
+
     public $result = '';
+
     public $ip_address = '';
+
     public $time_spent = '';
 
     public function mount()
     {
-        abort_if(!auth()->user()->is_admin, 403, 'Unauthorized action.');
+        abort_if(! auth()->user()->is_admin, 403, 'Unauthorized action.');
     }
 
     public function resetForm()
@@ -50,7 +55,7 @@ class ManageTests extends Component
         $this->result = $test->result;
         $this->ip_address = $test->ip_address;
         $this->time_spent = $test->time_spent;
-        
+
         $this->dispatch('open-modal', 'test-form');
     }
 
@@ -81,7 +86,7 @@ class ManageTests extends Component
 
     public function delete($id)
     {
-        abort_if(!auth()->user()->is_admin, 403);
+        abort_if(! auth()->user()->is_admin, 403);
         Test::findOrFail($id)->delete();
         $this->dispatch('close-modal', 'confirm-test-delete');
     }
@@ -92,10 +97,10 @@ class ManageTests extends Component
             ->with(['user', 'quiz'])
             ->when($this->search, function ($query) {
                 $query->whereHas('user', function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('email', 'like', '%' . $this->search . '%');
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('email', 'like', '%'.$this->search.'%');
                 })->orWhereHas('quiz', function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%');
+                    $q->where('title', 'like', '%'.$this->search.'%');
                 });
             })
             ->latest()

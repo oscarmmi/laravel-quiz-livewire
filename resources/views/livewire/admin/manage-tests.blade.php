@@ -11,8 +11,13 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                     <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <x-text-input wire:model.live.debounce.300ms="search" placeholder="Search by user or quiz..." class="w-full sm:w-1/2" />
-                        <x-primary-button wire:click="create">
-                            {{ __('Add New Test Record') }}
+                        <x-primary-button wire:click="create" wire:loading.attr="disabled" wire:target="create">
+                            <span wire:loading.remove wire:target="create">
+                                {{ __('Add New Test Record') }}
+                            </span>
+                            <span wire:loading wire:target="create">
+                                {{ __('Loading...') }}
+                            </span>
                         </x-primary-button>
                     </div>
                 </div>
@@ -119,12 +124,14 @@
                         </div>
 
                         <div class="mt-6 flex justify-end">
-                            <x-secondary-button wire:click="closeForm">
-                                {{ __('Cancel') }}
+                            <x-secondary-button wire:click="closeForm" wire:loading.attr="disabled" wire:target="closeForm">
+                                <span wire:loading.remove wire:target="closeForm">{{ __('Cancel') }}</span>
+                                <span wire:loading wire:target="closeForm">{{ __('Cancelling...') }}</span>
                             </x-secondary-button>
 
-                            <x-primary-button class="ms-3">
-                                {{ __('Save Test Record') }}
+                            <x-primary-button class="ms-3" wire:loading.attr="disabled" wire:target="save">
+                                <span wire:loading.remove wire:target="save">{{ __('Save Test Record') }}</span>
+                                <span wire:loading wire:target="save">{{ __('Saving...') }}</span>
                             </x-primary-button>
                         </div>
                     </form>

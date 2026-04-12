@@ -14,7 +14,9 @@ class Leaderboard extends Component
 
     public function render()
     {
-        $quizzes = Quiz::public()->get();
+        $quizzes = \Illuminate\Support\Facades\Cache::remember('public_quizzes_for_leaderboard', 3600, function () {
+            return Quiz::public()->select('id', 'title')->get();
+        });
 
         $tests = Test::query()
             ->whereHas('user')

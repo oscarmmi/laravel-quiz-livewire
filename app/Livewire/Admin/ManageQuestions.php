@@ -21,7 +21,7 @@ class ManageQuestions extends Component
     public $code_snippet = '';
     public $answer_explanation = '';
     public $more_info_link = '';
-    public $category_id = '';
+    public $category_ids = [];
 
     public function mount()
     {
@@ -30,7 +30,7 @@ class ManageQuestions extends Component
 
     public function resetForm()
     {
-        $this->reset(['questionId', 'question_text', 'code_snippet', 'answer_explanation', 'more_info_link', 'category_id']);
+        $this->reset(['questionId', 'question_text', 'code_snippet', 'answer_explanation', 'more_info_link', 'category_ids']);
         $this->resetValidation();
     }
 
@@ -41,19 +41,34 @@ class ManageQuestions extends Component
             'code_snippet' => 'nullable|string',
             'answer_explanation' => 'nullable|string',
             'more_info_link' => 'nullable|url',
-            'category_id' => 'required|exists:categories,id',
+            'category_ids' => 'required|array|min:1',
         ]);
 
-        Question::updateOrCreate(
+        $question = Question::updateOrCreate(
             ['id' => $this->questionId],
             [
                 'question_text' => $this->question_text,
                 'code_snippet' => $this->code_snippet,
                 'answer_explanation' => $this->answer_explanation,
                 'more_info_link' => $this->more_info_link,
-                'category_id' => $this->category_id,
             ]
         );
+
+        $finalCategoryIds = [];
+        foreach ($this->category_ids as $item) {
+            if (is_numeric($item)) {
+                if (Category::find($item)) {
+                    $finalCategoryIds[] = $item;
+                    continue;
+                }
+            }
+            
+            // If it's not a numeric ID (or the ID didn't exist), create a new Category
+            $newCat = Category::firstOrCreate(['name' => trim($item)]);
+            $finalCategoryIds[] = $newCat->id;
+        }
+
+        $question->categories()->sync($finalCategoryIds);
 
         $this->resetForm();
         $this->dispatch('question-saved');
@@ -69,7 +84,7 @@ class ManageQuestions extends Component
     public function render()
     {
         $questions = Question::query()
-            ->with('category')
+            ->with('categories')
             ->when($this->search, function ($query) {
                 $query->where('question_text', 'like', '%' . $this->search . '%');
             })

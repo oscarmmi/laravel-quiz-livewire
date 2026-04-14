@@ -8,7 +8,7 @@
         $wire.code_snippet = '';
         $wire.answer_explanation = '';
         $wire.more_info_link = '';
-        $wire.category_id = '';
+        $wire.category_ids = [];
     },
     openEdit(question) {
         this.showForm = true;
@@ -18,7 +18,7 @@
         $wire.code_snippet = question.code_snippet;
         $wire.answer_explanation = question.answer_explanation;
         $wire.more_info_link = question.more_info_link;
-        $wire.category_id = question.category_id;
+        $wire.category_ids = question.categories ? question.categories.map(c => c.id) : [];
     }
 }" @question-saved.window="showForm = false" x-cloak>
     <x-slot name="header">
@@ -48,7 +48,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Question</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Categories</th>
                                     <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
@@ -59,7 +59,7 @@
                                             <div class="line-clamp-2">{{ $question->question_text }}</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $question->category ? $question->category->name : 'N/A' }}
+                                            {{ $question->categories->isNotEmpty() ? $question->categories->pluck('name')->join(', ') : 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <!-- Cero llamadas a Livewire para rellenar datos. Los inyectamos en JS -->
@@ -98,14 +98,94 @@
 
                         <div class="space-y-4">
                             <div>
-                                <x-input-label for="category_id" value="Category" />
-                                <select wire:model="category_id" id="category_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    <option value="">Select a Category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('category_id')" class="mt-2" />
+                                <x-input-label for="category_search" value="Categories" />
+                                
+                                <div x-data="{
+                                    search: '',
+                                    allCategories: @js($categories),
+                                    get selected() {
+                                        return $wire.category_ids.map(item => {
+                                            let existing = this.allCategories.find(c => c.id == item);
+                                            return existing ? existing : { id: item, name: item };
+                                        });
+                                    },
+                                    get filtered() {
+                                        if (this.search === '') return [];
+                                        let s = this.search.toLowerCase();
+                                        return this.allCategories.filter(c => 
+                                            c.name.toLowerCase().includes(s) && 
+                                            !$wire.category_ids.some(id => id == c.id)
+                                        );
+                                    },
+                                    add(cat) {
+                                        if (!$wire.category_ids.includes(cat.id)) {
+                                            $wire.category_ids = [...$wire.category_ids, cat.id];
+                                        }
+                                        this.search = '';
+                                        $refs.searchInput.focus();
+                                    },
+                                    addFromSearch() {
+                                        let s = this.search.trim();
+                                        if (!s) return;
+                                        
+                                        let existing = this.allCategories.find(c => c.name.toLowerCase() === s.toLowerCase());
+                                        if (existing) {
+                                            this.add(existing);
+                                        } else {
+                                            if (!$wire.category_ids.some(item => typeof item === 'string' && item.toLowerCase() === s.toLowerCase())) {
+                                                $wire.category_ids = [...$wire.category_ids, s];
+                                            }
+                                            this.search = '';
+                                            $refs.searchInput.focus();
+                                        }
+                                    },
+                                    remove(index) {
+                                        let arr = [...$wire.category_ids];
+                                        arr.splice(index, 1);
+                                        $wire.category_ids = arr;
+                                    },
+                                    handleBackspace() {
+                                        if (this.search === '' && $wire.category_ids.length > 0) {
+                                            let arr = [...$wire.category_ids];
+                                            arr.pop();
+                                            $wire.category_ids = arr;
+                                        }
+                                    }
+                                }" class="relative mt-1" @click.away="search = ''">
+                                    
+                                    <div class="flex flex-wrap items-center gap-2 border border-gray-300 p-2 rounded-md shadow-sm bg-white focus-within:ring-1 focus-within:ring-indigo-500 focus-within:border-indigo-500 cursor-text" @click="$refs.searchInput.focus()">
+                                        <template x-for="(cat, index) in selected" :key="index">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                                <span x-text="cat.name"></span>
+                                                <button type="button" @click.stop="remove(index)" class="flex-shrink-0 ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-indigo-400 hover:bg-indigo-200 hover:text-indigo-500 focus:outline-none">
+                                                    <span class="sr-only">Remove</span>
+                                                    <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8"><path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" /></svg>
+                                                </button>
+                                            </span>
+                                        </template>
+                                        
+                                        <input x-ref="searchInput" type="text" x-model="search" @keydown.enter.prevent="addFromSearch()" @keydown.backspace="handleBackspace()" class="flex-1 outline-none min-w-[120px] bg-transparent border-0 ring-0 focus:ring-0 p-0 text-gray-900 sm:text-sm" placeholder="Search or add category...">
+                                    </div>
+
+                                    <!-- Dropdown -->
+                                    <div x-show="search.length > 0" x-transition x-cloak class="absolute z-10 w-full mt-1 bg-white shadow-lg border border-gray-200 max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto sm:text-sm">
+                                        <template x-if="filtered.length > 0">
+                                            <template x-for="cat in filtered" :key="cat.id">
+                                                <div @click="add(cat)" class="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-50 text-gray-900 group">
+                                                    <span x-text="cat.name" class="block truncate font-medium text-indigo-600"></span>
+                                                </div>
+                                            </template>
+                                        </template>
+                                        
+                                        <template x-if="filtered.length === 0">
+                                            <div @click="addFromSearch()" class="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-50 text-gray-900">
+                                                <span class="block truncate text-sm">Create new category: "<span x-text="search" class="font-bold text-indigo-600"></span>"</span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                                
+                                <x-input-error :messages="$errors->get('category_ids')" class="mt-2" />
                             </div>
 
                             <div>

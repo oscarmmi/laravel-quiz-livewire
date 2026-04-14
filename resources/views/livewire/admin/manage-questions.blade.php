@@ -8,6 +8,7 @@
         $wire.code_snippet = '';
         $wire.answer_explanation = '';
         $wire.more_info_link = '';
+        $wire.type = 'unique-answer';
         $wire.category_ids = [];
     },
     openEdit(question) {
@@ -18,6 +19,7 @@
         $wire.code_snippet = question.code_snippet;
         $wire.answer_explanation = question.answer_explanation;
         $wire.more_info_link = question.more_info_link;
+        $wire.type = question.type;
         $wire.category_ids = question.categories ? question.categories.map(c => c.id) : [];
     }
 }" @question-saved.window="showForm = false" x-cloak>
@@ -48,6 +50,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Question</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Categories</th>
                                     <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
@@ -57,6 +60,11 @@
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-6 py-4 text-sm font-medium text-gray-900">
                                             <div class="line-clamp-2">{{ $question->question_text }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                {{ Str::title(str_replace('-', ' ', $question->type)) }}
+                                            </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $question->categories->isNotEmpty() ? $question->categories->pluck('name')->join(', ') : 'N/A' }}
@@ -73,7 +81,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-10 text-center text-gray-500">No questions found.</td>
+                                        <td colspan="4" class="px-6 py-10 text-center text-gray-500">No questions found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -192,6 +200,17 @@
                                 </div>
                                 
                                 <x-input-error :messages="$errors->get('category_ids')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="type" value="Question Type" />
+                                <select wire:model="type" id="type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="unique-answer">Unique Answer</option>
+                                    <option value="multi-answer">Multiple Answer</option>
+                                    <option value="single-line">Single Line (Text)</option>
+                                    <option value="multi-line">Multi Line (Textarea)</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('type')" class="mt-2" />
                             </div>
 
                             <div>

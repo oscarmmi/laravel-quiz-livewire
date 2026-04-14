@@ -21,6 +21,7 @@ class ManageQuestions extends Component
     public $code_snippet = '';
     public $answer_explanation = '';
     public $more_info_link = '';
+    public $type = 'unique-answer';
     public $category_ids = [];
 
     public function mount()
@@ -30,7 +31,7 @@ class ManageQuestions extends Component
 
     public function resetForm()
     {
-        $this->reset(['questionId', 'question_text', 'code_snippet', 'answer_explanation', 'more_info_link', 'category_ids']);
+        $this->reset(['questionId', 'question_text', 'code_snippet', 'answer_explanation', 'more_info_link', 'type', 'category_ids']);
         $this->resetValidation();
     }
 
@@ -41,6 +42,7 @@ class ManageQuestions extends Component
             'code_snippet' => 'nullable|string',
             'answer_explanation' => 'nullable|string',
             'more_info_link' => 'nullable|url',
+            'type' => 'required|in:single-line,multi-line,unique-answer,multi-answer',
             'category_ids' => 'required|array|min:1',
         ]);
 
@@ -51,6 +53,7 @@ class ManageQuestions extends Component
                 'code_snippet' => $this->code_snippet,
                 'answer_explanation' => $this->answer_explanation,
                 'more_info_link' => $this->more_info_link,
+                'type' => $this->type,
             ]
         );
 

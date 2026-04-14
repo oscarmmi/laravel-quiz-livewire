@@ -61,7 +61,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $question->categories->isNotEmpty() ? $question->categories->pluck('name')->join(', ') : 'N/A' }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <!-- Cero llamadas a Livewire para rellenar datos. Los inyectamos en JS -->
                                             <button @click="openEdit(@js($question))" type="button" class="text-indigo-600 hover:text-indigo-900 focus:outline-none transition duration-150 ease-in-out mr-4">
                                                 Edit
@@ -104,22 +104,26 @@
                                     search: '',
                                     allCategories: @js($categories),
                                     get selected() {
+                                        if (!$wire.category_ids || !Array.isArray($wire.category_ids)) return [];
                                         return $wire.category_ids.map(item => {
-                                            let existing = this.allCategories.find(c => c.id == item);
-                                            return existing ? existing : { id: item, name: item };
+                                            let cats = Array.isArray(this.allCategories) ? this.allCategories : Object.values(this.allCategories);
+                                            let existing = cats.find(c => String(c.id) === String(item?.id || item));
+                                            return existing ? existing : { id: item, name: item?.name || item };
                                         });
                                     },
                                     get filtered() {
                                         if (this.search === '') return [];
                                         let s = this.search.toLowerCase();
-                                        return this.allCategories.filter(c => 
+                                        let cats = Array.isArray(this.allCategories) ? this.allCategories : Object.values(this.allCategories);
+                                        return cats.filter(c => 
                                             c.name.toLowerCase().includes(s) && 
-                                            !$wire.category_ids.some(id => id == c.id)
+                                            !($wire.category_ids || []).some(id => String(id) === String(c.id))
                                         );
                                     },
                                     add(cat) {
-                                        if (!$wire.category_ids.includes(cat.id)) {
-                                            $wire.category_ids = [...$wire.category_ids, cat.id];
+                                        let ids = $wire.category_ids || [];
+                                        if (!ids.some(id => String(id) === String(cat.id))) {
+                                            $wire.category_ids = [...ids, cat.id];
                                         }
                                         this.search = '';
                                         $refs.searchInput.focus();
@@ -128,24 +132,26 @@
                                         let s = this.search.trim();
                                         if (!s) return;
                                         
-                                        let existing = this.allCategories.find(c => c.name.toLowerCase() === s.toLowerCase());
+                                        let cats = Array.isArray(this.allCategories) ? this.allCategories : Object.values(this.allCategories);
+                                        let existing = cats.find(c => c.name.toLowerCase() === s.toLowerCase());
                                         if (existing) {
                                             this.add(existing);
                                         } else {
-                                            if (!$wire.category_ids.some(item => typeof item === 'string' && item.toLowerCase() === s.toLowerCase())) {
-                                                $wire.category_ids = [...$wire.category_ids, s];
+                                            let ids = $wire.category_ids || [];
+                                            if (!ids.some(item => typeof item === 'string' && item.toLowerCase() === s.toLowerCase())) {
+                                                $wire.category_ids = [...ids, s];
                                             }
                                             this.search = '';
                                             $refs.searchInput.focus();
                                         }
                                     },
                                     remove(index) {
-                                        let arr = [...$wire.category_ids];
+                                        let arr = [...($wire.category_ids || [])];
                                         arr.splice(index, 1);
                                         $wire.category_ids = arr;
                                     },
                                     handleBackspace() {
-                                        if (this.search === '' && $wire.category_ids.length > 0) {
+                                        if (this.search === '' && ($wire.category_ids || []).length > 0) {
                                             let arr = [...$wire.category_ids];
                                             arr.pop();
                                             $wire.category_ids = arr;

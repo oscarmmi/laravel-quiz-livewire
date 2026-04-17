@@ -15,8 +15,6 @@ class ManageQuizzes extends Component
 
     public $search = '';
 
-    public $isFormOpen = false;
-
     // Form fields
     public $quizId = null;
     public $title = '';
@@ -34,31 +32,6 @@ class ManageQuizzes extends Component
     {
         $this->reset(['quizId', 'title', 'slug', 'description', 'published', 'public']);
         $this->resetValidation();
-    }
-
-    public function create()
-    {
-        $this->resetForm();
-        $this->isFormOpen = true;
-    }
-
-    public function edit(Quiz $quiz)
-    {
-        $this->resetForm();
-        $this->quizId = $quiz->id;
-        $this->title = $quiz->title;
-        $this->slug = $quiz->slug;
-        $this->description = $quiz->description;
-        $this->published = $quiz->published;
-        $this->public = $quiz->public;
-        
-        $this->isFormOpen = true;
-    }
-
-    public function closeForm()
-    {
-        $this->isFormOpen = false;
-        $this->resetForm();
     }
 
     public function save()
@@ -87,7 +60,8 @@ class ManageQuizzes extends Component
             ]
         );
 
-        $this->closeForm();
+        $this->dispatch('quiz-saved');
+        $this->resetForm();
     }
 
     public function delete($id)

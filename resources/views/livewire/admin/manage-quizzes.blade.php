@@ -1,4 +1,24 @@
-<div>
+<div x-data="{
+    showForm: false,
+    openCreate() {
+        this.showForm = true;
+        $wire.quizId = null;
+        $wire.title = '';
+        $wire.slug = '';
+        $wire.description = '';
+        $wire.public = false;
+        $wire.published = false;
+    },
+    openEdit(quiz) {
+        this.showForm = true;
+        $wire.quizId = quiz.id;
+        $wire.title = quiz.title;
+        $wire.slug = quiz.slug;
+        $wire.description = quiz.description;
+        $wire.public = !!quiz.public;
+        $wire.published = !!quiz.published;
+    }
+}" @quiz-saved.window="showForm = false" x-cloak>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Manage Quizzes') }}
@@ -7,24 +27,21 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(!$isFormOpen)
+            <!-- List View -->
+            <div x-show="!showForm" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                     <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <x-text-input wire:model.live.debounce.300ms="search" placeholder="Search quizzes..." class="w-full sm:w-1/2" />
-                        <x-primary-button wire:click="create" wire:loading.attr="disabled" wire:target="create">
-                            <span wire:loading.remove wire:target="create">
-                                {{ __('Add New Quiz') }}
-                            </span>
-                            <span wire:loading wire:target="create">
-                                {{ __('Loading...') }}
-                            </span>
+                        
+                        <x-primary-button @click="openCreate()" type="button">
+                            {{ __('Add New Quiz') }}
                         </x-primary-button>
                     </div>
                 </div>
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                        <table class="w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Title</th>
@@ -52,7 +69,7 @@
                                             {{ $quiz->questions_count }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button wire:click="edit({{ $quiz->id }})" class="text-indigo-600 hover:text-indigo-900 focus:outline-none transition duration-150 ease-in-out mr-4">
+                                            <button @click="openEdit(@js($quiz))" type="button" class="text-indigo-600 hover:text-indigo-900 focus:outline-none transition duration-150 ease-in-out mr-4">
                                                 Edit
                                             </button>
                                             <button x-data x-on:click="$dispatch('open-delete-modal', {{ $quiz->id }})" class="text-red-600 hover:text-red-900 focus:outline-none transition duration-150 ease-in-out">
@@ -75,12 +92,14 @@
                         @endif
                     </div>
                 </div>
-            @else
-                <!-- Form View -->
+            </div>
+
+            <!-- Form View -->
+            <div x-show="showForm" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" class="relative">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <form wire:submit.prevent="save" class="p-6">
                         <h2 class="text-lg font-medium text-gray-900 mb-4">
-                            {{ $quizId ? 'Edit Quiz' : 'Create New Quiz' }}
+                            <span x-text="$wire.quizId ? 'Edit Quiz' : 'Create New Quiz'"></span>
                         </h2>
 
                         <div class="space-y-4">
@@ -116,9 +135,8 @@
                         </div>
 
                         <div class="mt-6 flex justify-end">
-                            <x-secondary-button wire:click="closeForm" wire:loading.attr="disabled" wire:target="closeForm">
-                                <span wire:loading.remove wire:target="closeForm">{{ __('Cancel') }}</span>
-                                <span wire:loading wire:target="closeForm">{{ __('Cancelling...') }}</span>
+                            <x-secondary-button @click="showForm = false" type="button">
+                                {{ __('Cancel') }}
                             </x-secondary-button>
 
                             <x-primary-button class="ms-3" wire:loading.attr="disabled" wire:target="save">
@@ -128,7 +146,7 @@
                         </div>
                     </form>
                 </div>
-            @endif
+            </div>
         </div>
     </div>
 

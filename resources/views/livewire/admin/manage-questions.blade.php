@@ -1,5 +1,8 @@
 <div x-data="{
     showForm: false,
+    managingOptionsFor: null,
+    currentOptions: [],
+    optionsError: '',
     openCreate() {
         this.showForm = true;
         // Limpiamos los campos en el navegador, sin esperar a Livewire
@@ -21,8 +24,50 @@
         $wire.more_info_link = question.more_info_link;
         $wire.type = question.type;
         $wire.category_ids = question.categories ? question.categories.map(c => c.id) : [];
+    },
+    openOptions(question) {
+        this.optionsError = '';
+        this.managingOptionsFor = question;
+        let opts = question.options ? JSON.parse(JSON.stringify(question.options)) : [];
+        if (question.type === 'single-line' || question.type === 'multi-line') {
+            if (opts.length === 0) {
+                opts.push({ id: null, text: '', correct: true });
+            } else {
+                opts[0].correct = true;
+                opts = [opts[0]];
+            }
+        } else {
+            if (opts.length === 0) {
+                opts.push({ id: null, text: '', correct: false });
+            }
+        }
+        this.currentOptions = opts;
+        $dispatch('open-modal', 'manage-options-modal');
+    },
+    addOption() {
+        if (this.currentOptions.length < 4) {
+            this.currentOptions.push({ id: null, text: '', correct: false });
+        }
+    },
+    removeOption(index) {
+        this.currentOptions.splice(index, 1);
+    },
+    setUniqueCorrect(index) {
+        this.currentOptions.forEach((opt, i) => {
+            opt.correct = (i === index);
+        });
+    },
+    saveOptions() {
+        this.optionsError = '';
+        if (this.managingOptionsFor && ['unique-answer', 'multi-answer'].includes(this.managingOptionsFor.type)) {
+            if (!this.currentOptions.some(opt => opt.correct)) {
+                this.optionsError = 'You must select at least one correct answer.';
+                return;
+            }
+        }
+        $wire.saveOptions(this.managingOptionsFor.id, this.currentOptions);
     }
-}" @question-saved.window="showForm = false" x-cloak>
+}" @question-saved.window="showForm = false" @options-saved.window="$dispatch('close-modal', 'manage-options-modal');" x-cloak>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Manage Questions') }}
@@ -73,6 +118,9 @@
                                             <!-- Cero llamadas a Livewire para rellenar datos. Los inyectamos en JS -->
                                             <button @click="openEdit(@js($question))" type="button" class="text-indigo-600 hover:text-indigo-900 focus:outline-none transition duration-150 ease-in-out mr-4">
                                                 Edit
+                                            </button>
+                                            <button @click="openOptions(@js($question))" type="button" class="text-green-600 hover:text-green-900 focus:outline-none transition duration-150 ease-in-out mr-4">
+                                                Answers
                                             </button>
                                             <button x-data x-on:click="$dispatch('open-delete-modal', {{ $question->id }})" class="text-red-600 hover:text-red-900 focus:outline-none transition duration-150 ease-in-out">
                                                 Delete
@@ -279,4 +327,93 @@
             </div>
         </x-modal>
     </div>
+
+    <!-- Manage Options / Answers Modal -->
+    <x-modal name="manage-options-modal" focusable maxWidth="2xl">
+        <div class="p-6">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">
+                Manage Answers
+            </h2>
+            
+            <template x-if="managingOptionsFor">
+                <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-inner">
+                    <p class="text-sm font-medium text-gray-700">Question:</p>
+                    <p class="text-sm text-gray-900 mt-1 line-clamp-2" x-text="managingOptionsFor.question_text"></p>
+                    <p class="text-xs text-gray-500 mt-2">
+                        Type: <span class="font-semibold text-gray-700" x-text="managingOptionsFor.type.replace('-', ' ')"></span>
+                    </p>
+                </div>
+            </template>
+
+            <div x-show="optionsError" x-transition x-cloak class="mb-4 text-sm font-medium text-red-600 bg-red-50 p-3 rounded-md border border-red-200 flex items-center gap-2">
+                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span x-text="optionsError"></span>
+            </div>
+
+            <div class="space-y-4">
+                <template x-if="managingOptionsFor && managingOptionsFor.type === 'unique-answer'">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-3">Add up to 4 answers and select the correct one.</p>
+                        <template x-for="(option, index) in currentOptions" :key="index">
+                            <div class="flex items-center gap-3 mb-3">
+                                <input type="radio" :name="'correct_option'" :checked="option.correct" @change="setUniqueCorrect(index)" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500">
+                                <x-text-input x-model="option.text" type="text" class="flex-1" placeholder="Answer option text..." />
+                                <button type="button" @click="removeOption(index)" class="text-red-500 hover:text-red-700" title="Remove Option">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </template>
+                        <x-secondary-button @click="addOption()" x-show="currentOptions.length < 4" type="button" class="mt-2 text-xs">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Add Answer
+                        </x-secondary-button>
+                    </div>
+                </template>
+
+                <template x-if="managingOptionsFor && managingOptionsFor.type === 'multi-answer'">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-3">Add up to 4 answers and select all correct ones.</p>
+                        <template x-for="(option, index) in currentOptions" :key="index">
+                            <div class="flex items-center gap-3 mb-3">
+                                <input type="checkbox" x-model="option.correct" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500">
+                                <x-text-input x-model="option.text" type="text" class="flex-1" placeholder="Answer option text..." />
+                                <button type="button" @click="removeOption(index)" class="text-red-500 hover:text-red-700" title="Remove Option">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </template>
+                        <x-secondary-button @click="addOption()" x-show="currentOptions.length < 4" type="button" class="mt-2 text-xs">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Add Answer
+                        </x-secondary-button>
+                    </div>
+                </template>
+
+                <template x-if="managingOptionsFor && managingOptionsFor.type === 'single-line'">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-3">Enter the expected correct answer.</p>
+                        <x-text-input x-model="currentOptions[0].text" type="text" class="w-full" placeholder="Correct exact answer..." />
+                    </div>
+                </template>
+
+                <template x-if="managingOptionsFor && managingOptionsFor.type === 'multi-line'">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-3">Enter the expected correct answer.</p>
+                        <textarea x-model="currentOptions[0].text" rows="4" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" placeholder="Correct exact answer..."></textarea>
+                    </div>
+                </template>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-primary-button @click="saveOptions()" class="ms-3" type="button" wire:loading.attr="disabled" wire:target="saveOptions">
+                    <span wire:loading.remove wire:target="saveOptions">{{ __('Save Answers') }}</span>
+                    <span wire:loading wire:target="saveOptions">{{ __('Saving...') }}</span>
+                </x-primary-button>
+            </div>
+        </div>
+    </x-modal>
 </div>

@@ -84,10 +84,40 @@ class ManageQuestions extends Component
         $this->dispatch('close-modal', 'confirm-question-delete');
     }
 
+    public function saveOptions($questionId, $options)
+    {
+        abort_if(!auth()->user()->is_admin, 403);
+        $question = Question::findOrFail($questionId);
+
+        $existingIds = collect($options)->pluck('id')->filter()->toArray();
+        
+        // Remove options that are no longer there
+        $question->options()->whereNotIn('id', $existingIds)->delete();
+
+        foreach ($options as $opt) {
+            if (isset($opt['id']) && $opt['id']) {
+                $option = $question->options()->find($opt['id']);
+                if ($option) {
+                    $option->update([
+                        'text' => $opt['text'],
+                        'correct' => (bool)$opt['correct'],
+                    ]);
+                }
+            } else {
+                $question->options()->create([
+                    'text' => $opt['text'],
+                    'correct' => (bool)$opt['correct'],
+                ]);
+            }
+        }
+
+        $this->dispatch('options-saved');
+    }
+
     public function render()
     {
         $questions = Question::query()
-            ->with('categories')
+            ->with(['categories', 'options'])
             ->when($this->search, function ($query) {
                 $query->where('question_text', 'like', '%' . $this->search . '%');
             })

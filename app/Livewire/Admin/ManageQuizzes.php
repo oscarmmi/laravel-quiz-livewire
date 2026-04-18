@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Quiz;
+use App\Models\Question;
+use App\Models\Category;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -71,6 +73,16 @@ class ManageQuizzes extends Component
         $this->dispatch('close-modal', 'confirm-quiz-delete');
     }
 
+    public function saveQuestions($quizId, $questionIds)
+    {
+        abort_if(!auth()->user()->is_admin, 403);
+        
+        $quiz = Quiz::findOrFail($quizId);
+        $quiz->questions()->sync($questionIds);
+        
+        $this->dispatch('quiz-questions-saved');
+    }
+
     public function render()
     {
         $quizzes = Quiz::query()
@@ -78,10 +90,14 @@ class ManageQuizzes extends Component
                 $query->where('title', 'like', '%' . $this->search . '%')
                       ->orWhere('description', 'like', '%' . $this->search . '%');
             })
+            ->with('questions')
             ->withCount('questions')
             ->latest()
             ->paginate(10);
 
-        return view('livewire.admin.manage-quizzes', compact('quizzes'));
+        $categories = Category::orderBy('name')->get();
+        $allQuestions = Question::with('categories')->select('id', 'question_text')->orderBy('id', 'desc')->get();
+
+        return view('livewire.admin.manage-quizzes', compact('quizzes', 'categories', 'allQuestions'));
     }
 }

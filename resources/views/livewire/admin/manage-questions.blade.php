@@ -11,7 +11,7 @@
         $wire.code_snippet = '';
         $wire.answer_explanation = '';
         $wire.more_info_link = '';
-        $wire.type = 'unique-answer';
+        $wire.type = '{{ \App\Enums\QuestionType::UniqueAnswer->value }}';
         $wire.category_ids = [];
     },
     openEdit(question) {
@@ -29,7 +29,7 @@
         this.optionsError = '';
         this.managingOptionsFor = question;
         let opts = question.options ? JSON.parse(JSON.stringify(question.options)) : [];
-        if (question.type === 'single-line' || question.type === 'multi-line') {
+        if (question.type === '{{ \App\Enums\QuestionType::SingleLine->value }}' || question.type === '{{ \App\Enums\QuestionType::MultiLine->value }}') {
             if (opts.length === 0) {
                 opts.push({ id: null, text: '', correct: true });
             } else {
@@ -59,7 +59,7 @@
     },
     saveOptions() {
         this.optionsError = '';
-        if (this.managingOptionsFor && ['unique-answer', 'multi-answer'].includes(this.managingOptionsFor.type)) {
+        if (this.managingOptionsFor && ['{{ \App\Enums\QuestionType::UniqueAnswer->value }}', '{{ \App\Enums\QuestionType::MultiAnswer->value }}'].includes(this.managingOptionsFor.type)) {
             if (!this.currentOptions.some(opt => opt.correct)) {
                 this.optionsError = 'You must select at least one correct answer.';
                 return;
@@ -108,7 +108,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                {{ Str::title(str_replace('-', ' ', $question->type)) }}
+                                                {{ $question->type?->label() ?? 'Unknown' }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -253,10 +253,9 @@
                             <div>
                                 <x-input-label for="type" value="Question Type" />
                                 <select wire:model="type" id="type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    <option value="unique-answer">Unique Answer</option>
-                                    <option value="multi-answer">Multiple Answer</option>
-                                    <option value="single-line">Single Line (Text)</option>
-                                    <option value="multi-line">Multi Line (Textarea)</option>
+                                    @foreach(\App\Enums\QuestionType::cases() as $case)
+                                        <option value="{{ $case->value }}">{{ $case->label() }}</option>
+                                    @endforeach
                                 </select>
                                 <x-input-error :messages="$errors->get('type')" class="mt-2" />
                             </div>
@@ -351,7 +350,7 @@
             </div>
 
             <div class="space-y-4">
-                <template x-if="managingOptionsFor && managingOptionsFor.type === 'unique-answer'">
+                <template x-if="managingOptionsFor && managingOptionsFor.type === '{{ \App\Enums\QuestionType::UniqueAnswer->value }}'">
                     <div>
                         <p class="text-sm text-gray-600 mb-3">Add up to 4 answers and select the correct one.</p>
                         <template x-for="(option, index) in currentOptions" :key="index">
@@ -370,7 +369,7 @@
                     </div>
                 </template>
 
-                <template x-if="managingOptionsFor && managingOptionsFor.type === 'multi-answer'">
+                <template x-if="managingOptionsFor && managingOptionsFor.type === '{{ \App\Enums\QuestionType::MultiAnswer->value }}'">
                     <div>
                         <p class="text-sm text-gray-600 mb-3">Add up to 4 answers and select all correct ones.</p>
                         <template x-for="(option, index) in currentOptions" :key="index">
@@ -389,14 +388,14 @@
                     </div>
                 </template>
 
-                <template x-if="managingOptionsFor && managingOptionsFor.type === 'single-line'">
+                <template x-if="managingOptionsFor && managingOptionsFor.type === '{{ \App\Enums\QuestionType::SingleLine->value }}'">
                     <div>
                         <p class="text-sm text-gray-600 mb-3">Enter the expected correct answer.</p>
                         <x-text-input x-model="currentOptions[0].text" type="text" class="w-full" placeholder="Correct exact answer..." />
                     </div>
                 </template>
 
-                <template x-if="managingOptionsFor && managingOptionsFor.type === 'multi-line'">
+                <template x-if="managingOptionsFor && managingOptionsFor.type === '{{ \App\Enums\QuestionType::MultiLine->value }}'">
                     <div>
                         <p class="text-sm text-gray-600 mb-3">Enter the expected correct answer.</p>
                         <textarea x-model="currentOptions[0].text" rows="4" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" placeholder="Correct exact answer..."></textarea>

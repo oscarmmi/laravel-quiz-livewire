@@ -19,6 +19,10 @@ class Question extends Model
         'type',
     ];
 
+    protected $casts = [
+        'type' => \App\Enums\QuestionType::class,
+    ];
+
     public function categories()
     {
         return $this->belongsToMany(Category::class);

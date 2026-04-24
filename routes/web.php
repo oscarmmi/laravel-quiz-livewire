@@ -15,6 +15,11 @@ Route::get('leaderboard', Leaderboard::class)
     ->middleware(['auth'])
     ->name('leaderboard');
 
+Route::get('test/{test}', \App\Livewire\Quiz\TakeTest::class)
+    ->middleware(['auth'])
+    ->name('test.show');
+
+
 Route::get('admin/users', \App\Livewire\Admin\ManageAdmins::class)
     ->middleware(['auth'])
     ->name('admin.users');

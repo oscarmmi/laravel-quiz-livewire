@@ -49,11 +49,14 @@ class TakeTest extends Component
             }
         }
 
+        $totalQuestions = $this->quiz->questions->count();
+        $percentageScore = $totalQuestions > 0 ? (int) ceil(($totalScore / $totalQuestions) * 100) : 0;
+
         $this->test->update([
-            'result' => $totalScore,
+            'result' => $percentageScore,
         ]);
 
-        $this->score = $totalScore;
+        $this->score = $percentageScore;
         $this->isSubmitted = true;
     }
 

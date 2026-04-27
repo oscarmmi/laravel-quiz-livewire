@@ -35,10 +35,13 @@
                 </div>
             </header>
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
-    </body>
+<!-- Page Content -->
+    <main>
+        {{ $slot }}
+    </main>
+
+    
+</div>
+<x-footer />
+</body>
 </html>

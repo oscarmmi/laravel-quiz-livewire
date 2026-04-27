@@ -78,11 +78,30 @@
                                 <x-primary-button type="button" x-show="step < (total - 1)" x-on:click.prevent="step++">
                                     Next
                                 </x-primary-button>
-                                <div x-show="step >= (total - 1)">
-                                    <x-primary-button wire:click="submit">
-                                        Submit Quiz
-                                    </x-primary-button>
-                                </div>
+<div x-show="step >= (total - 1)">
+                                        <x-primary-button x-on:click="$dispatch('open-modal', 'confirm-submit')">
+                                            Submit Quiz
+                                        </x-primary-button>
+                                    </div>
+
+                                    <x-modal name="confirm-submit" :show="false">
+                                        <div class="p-6">
+                                            <h3 class="text-lg font-medium text-gray-900">
+                                                Submit Quiz?
+                                            </h3>
+                                            <p class="mt-2 text-sm text-gray-600">
+                                                Are you sure you want to submit your quiz? Once submitted, you cannot change your answers.
+                                            </p>
+                                            <div class="mt-6 flex justify-end gap-3">
+                                                <x-secondary-button x-on:click="$dispatch('close-modal', 'confirm-submit')">
+                                                    Cancel
+                                                </x-secondary-button>
+                                                <x-primary-button wire:click="submit" x-on:click="$dispatch('close-modal', 'confirm-submit')">
+                                                    Confirm Submit
+                                                </x-primary-button>
+                                            </div>
+                                        </div>
+                                    </x-modal>
                             </div>
                         </div>
                     </div>

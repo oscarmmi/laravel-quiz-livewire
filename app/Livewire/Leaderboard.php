@@ -17,18 +17,19 @@ class Leaderboard extends Component
         $quizzes = Quiz::public()->get();
 
         $tests = Test::query()
+            ->select('user_id')
+            ->selectRaw('AVG(result) as avg_result')
+            ->selectRaw('SUM(time_spent) as total_time_spent')
             ->whereHas('user')
             ->with(['user' => function ($query) {
                 $query->select('id', 'name');
-            }, 'quiz' => function ($query) {
-                $query->select('id', 'title');
-                $query->withCount('questions');
             }])
             ->when($this->quiz_id > 0, function ($query) {
                 $query->where('quiz_id', $this->quiz_id);
             })
-            ->orderBy('result', 'desc')
-            ->orderBy('time_spent')
+            ->groupBy('user_id')
+            ->orderByDesc('avg_result')
+            ->orderBy('total_time_spent')
             ->get();
 
         return view('livewire.leaderboard', [

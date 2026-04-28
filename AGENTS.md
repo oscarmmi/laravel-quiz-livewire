@@ -67,6 +67,10 @@ This file provides guidelines for the AI coding assistant to work effectively on
 - Use existing Blade components: `<x-modal>`, `<x-primary-button>`, `<x-secondary-button>`
 - Use Tailwind utility classes (no custom CSS)
 
+### Code Formatting
+- **Always maintain proper indentation** - Use 4 spaces for indentation in all files (Blade, PHP, JS, etc.)
+- Match the existing code style in the file when making edits
+
 ## 5. Common Pitfalls to Avoid
 
 1. **Multiple root elements** - Always use ONE wrapper div

@@ -1,47 +1,46 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @if (auth()->check() && auth()->user()->is_admin)
-                <livewire:admin.navigation />
-            @else
-                <livewire:layout.navigation />
-            @endif
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans antialiased">
+    <div class="min-h-screen bg-gray-100 flex flex-col">
+        @if (auth()->check() && auth()->user()->is_admin)
+            <livewire:admin.navigation />
+        @else
+            <livewire:layout.navigation />
+        @endif
 
-            <!-- Page Heading -->
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                    <x-breadcrumbs />
-                    
-                    @if (isset($header))
-                        <div class="mt-2">
-                            {{ $header }}
-                        </div>
-                    @endif
-                </div>
-            </header>
+        <!-- Page Heading -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <x-breadcrumbs />
 
-<!-- Page Content -->
-    <main>
-        {{ $slot }}
-    </main>
+                @if (isset($header))
+                    <div class="mt-2">
+                        {{ $header }}
+                    </div>
+                @endif
+            </div>
+        </header>
 
-    
-</div>
-<x-footer />
+        <!-- Page Content -->
+        <main class="flex-grow">
+            {{ $slot }}
+        </main>
+
+        <x-footer />
+    </div>
 </body>
 </html>

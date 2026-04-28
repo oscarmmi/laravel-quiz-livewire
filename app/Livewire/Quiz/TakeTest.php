@@ -29,36 +29,41 @@ class TakeTest extends Component
         }
     }
 
-    public function submit()
-    {
-        $totalScore = 0;
+public function submit()
+{
+    if ($this->isSubmitted) {
+        return;
+    }
 
-        foreach ($this->answers as $questionId => $answerData) {
-            // Check if answer is an array (multi-answer) or single value
-            if (is_array($answerData)) {
-                foreach ($answerData as $optionId => $isSelected) {
-                    if ($isSelected) {
-                        $this->saveAnswer($questionId, $optionId, $totalScore);
-                    }
-                }
-            } else {
-                // $answerData is the optionId
-                if (is_numeric($answerData)) {
-                    $this->saveAnswer($questionId, $answerData, $totalScore);
+    $totalScore = 0;
+
+    $freshQuiz = Quiz::with('questions.options')->find($this->quiz->id);
+    $totalQuestions = $freshQuiz->questions->count();
+
+    foreach ($this->answers as $questionId => $answerData) {
+        if (is_array($answerData)) {
+            foreach ($answerData as $optionId => $isSelected) {
+                if ($isSelected) {
+                    $this->saveAnswer($questionId, $optionId, $totalScore);
                 }
             }
+        } else {
+            if (is_numeric($answerData)) {
+                $this->saveAnswer($questionId, $answerData, $totalScore);
+            }
         }
-
-        $totalQuestions = $this->quiz->questions->count();
-        $percentageScore = $totalQuestions > 0 ? (int) ceil(($totalScore / $totalQuestions) * 100) : 0;
-
-        $this->test->update([
-            'result' => $percentageScore,
-        ]);
-
-        $this->score = $percentageScore;
-        $this->isSubmitted = true;
     }
+
+    $percentageScore = $totalQuestions > 0 ? (int) ceil(($totalScore / $totalQuestions) * 100) : 0;
+    $percentageScore = min($percentageScore, 100);
+
+    $this->test->update([
+        'result' => $percentageScore,
+    ]);
+
+    $this->score = $percentageScore;
+    $this->isSubmitted = true;
+}
 
     private function saveAnswer($questionId, $optionId, &$totalScore)
     {

@@ -78,8 +78,8 @@ This file provides guidelines for the AI coding assistant to work effectively on
 
 Before running tests:
 ```bash
+npm run build
 php artisan view:clear
-php artisan test
 ```
 
 ---

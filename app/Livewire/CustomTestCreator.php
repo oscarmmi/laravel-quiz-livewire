@@ -134,6 +134,10 @@ class CustomTestCreator extends Component
         $sourceCount = count($selectedSources);
 
         if ($sourceCount === 0) {
+            $field = $this->sourceType === 'categories' ? 'selectedCategories' : 'selectedQuizzes';
+            $this->addError($field, __('Please select at least one :type.', [
+                'type' => $this->sourceType === 'categories' ? 'category' : 'quiz'
+            ]));
             return;
         }
 

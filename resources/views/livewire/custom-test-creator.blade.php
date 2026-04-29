@@ -145,12 +145,11 @@
 
                                 <!-- Submit Button -->
                                 <div class="pt-4">
-                                    <x-primary-button
-                                        type="submit"
-                                        class="w-full justify-center py-3"
-                                        x-bind:disabled="!canSubmit"
-                                        :disabled="$totalQuestions < 1"
-                                    >
+<x-primary-button
+                    type="submit"
+                    class="w-full justify-center py-3"
+                    x-bind:disabled="!canSubmit"
+                >
                                         {{ __('Generate Custom Test') }}
                                     </x-primary-button>
                                 </div>

@@ -5,9 +5,41 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+<div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+
+            <!-- Custom Test Creator Card -->
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 overflow-hidden shadow-sm sm:rounded-lg mb-8 border-2 border-emerald-300">
+                <div class="p-6 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0 bg-white/30 rounded-lg p-3">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Create Custom Test</h3>
+                            <p class="text-emerald-100 text-sm">Build a personalized quiz from selected categories</p>
+                        </div>
+                    </div>
+                    <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'custom-test-creator')" class="inline-flex items-center px-4 py-2 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors shadow-md border border-yellow-500">
+                        GET STARTED
+                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <x-modal name="custom-test-creator" focusable>
+                <div class="bg-emerald-50 px-6 py-4 border-b border-emerald-200">
+                    <h2 class="text-lg font-bold text-emerald-800">Create Custom Test</h2>
+                </div>
+                <div class="p-6">
+                    @livewire('custom-test-creator')
+                </div>
+            </x-modal>
+
             <h3 class="text-2xl font-bold text-gray-800 mb-6 px-2 sm:px-0">Available Quizzes</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

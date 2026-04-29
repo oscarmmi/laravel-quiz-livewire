@@ -42,4 +42,9 @@ class Quiz extends Model
     {
         return $q->where('published', true);
     }
+
+    public function scopeNotByUser($q)
+    {
+        return $q->where('created_by', '!=', 'user');
+    }
 }

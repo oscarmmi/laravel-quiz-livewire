@@ -16,6 +16,11 @@ class Test extends Model
         'result',
         'ip_address',
         'time_spent',
+        'created_by',
+    ];
+
+    protected $casts = [
+        'created_by' => \App\Enums\TestCreatedBy::class,
     ];
 
     public function user()

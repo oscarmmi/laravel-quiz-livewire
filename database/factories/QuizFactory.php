@@ -14,6 +14,7 @@ class QuizFactory extends Factory
             'description' => fake()->paragraph(),
             'published' => fake()->boolean(),
             'public' => fake()->boolean(),
+            'created_by' => \App\Enums\TestCreatedBy::Admin,
         ];
     }
 }

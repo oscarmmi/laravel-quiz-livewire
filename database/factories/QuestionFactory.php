@@ -16,6 +16,7 @@ class QuestionFactory extends Factory
             'code_snippet' => null,
             'answer_explanation' => $this->faker->paragraph(),
             'more_info_link' => $this->faker->url(),
+            'type' => \App\Enums\QuestionType::UniqueAnswer,
         ];
     }
 }

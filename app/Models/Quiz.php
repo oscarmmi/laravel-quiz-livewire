@@ -16,11 +16,14 @@ class Quiz extends Model
         'description',
         'published',
         'public',
+        'created_by',
+        'user_id',
     ];
 
     protected $casts = [
         'published' => 'boolean',
         'public'    => 'boolean',
+        'created_by' => \App\Enums\TestCreatedBy::class,
     ];
 
     public function getRouteKeyName()
@@ -31,6 +34,11 @@ class Quiz extends Model
     public function questions()
     {
         return $this->belongsToMany(Question::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function scopePublic($q)
@@ -45,6 +53,6 @@ class Quiz extends Model
 
     public function scopeNotByUser($q)
     {
-        return $q->where('created_by', '!=', 'user');
+        return $q->where('user_id', '!=', auth()->id());
     }
 }

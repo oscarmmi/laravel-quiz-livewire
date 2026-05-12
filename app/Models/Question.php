@@ -30,6 +30,11 @@ class Question extends Model
 
     public function options(): HasMany
     {
+        return $this->hasMany(Option::class);
+    }
+
+    public function shuffledOptions(): HasMany
+    {
         return $this->hasMany(Option::class)->inRandomOrder();
     }
 

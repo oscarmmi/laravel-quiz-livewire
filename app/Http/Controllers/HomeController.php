@@ -13,7 +13,7 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $quizzes = Quiz::public()
+        $quizzes = Quiz::availableFor()
             ->has('questions')
             ->withCount('questions')
             ->get();

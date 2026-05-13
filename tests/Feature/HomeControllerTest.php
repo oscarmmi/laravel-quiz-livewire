@@ -19,22 +19,39 @@ class HomeControllerTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    public function test_authenticated_user_can_access_dashboard_and_see_public_quizzes_with_questions(): void
+    public function test_authenticated_user_can_access_dashboard_and_see_relevant_quizzes(): void
     {
         $user = User::factory()->create();
+        $otherUser = User::factory()->create();
 
-        // 1. Public quiz with questions (Should be visible)
-        $publicQuizWithQuestions = Quiz::factory()->create(['public' => true]);
-        $question1 = Question::factory()->create();
-        $publicQuizWithQuestions->questions()->attach($question1);
+        // 1. Admin quiz (Should be visible)
+        $adminQuiz = Quiz::factory()->create([
+            'created_by' => \App\Enums\TestCreatedBy::Admin,
+            'public' => true
+        ]);
+        $adminQuiz->questions()->attach(Question::factory()->create());
 
-        // 2. Private quiz with questions (Should NOT be visible)
-        $privateQuizWithQuestions = Quiz::factory()->create(['public' => false]);
-        $question2 = Question::factory()->create();
-        $privateQuizWithQuestions->questions()->attach($question2);
+        // 2. User's own quiz (Should be visible, even if not public)
+        $userQuiz = Quiz::factory()->create([
+            'user_id' => $user->id,
+            'created_by' => \App\Enums\TestCreatedBy::User,
+            'public' => false
+        ]);
+        $userQuiz->questions()->attach(Question::factory()->create());
 
-        // 3. Public quiz WITHOUT questions (Should NOT be visible)
-        $publicQuizWithoutQuestions = Quiz::factory()->create(['public' => true]);
+        // 3. Other user's quiz (Should NOT be visible)
+        $otherUserQuiz = Quiz::factory()->create([
+            'user_id' => $otherUser->id,
+            'created_by' => \App\Enums\TestCreatedBy::User,
+            'public' => false
+        ]);
+        $otherUserQuiz->questions()->attach(Question::factory()->create());
+
+        // 4. Admin quiz WITHOUT questions (Should NOT be visible)
+        $adminQuizNoQuestions = Quiz::factory()->create([
+            'created_by' => \App\Enums\TestCreatedBy::Admin,
+            'public' => true
+        ]);
 
         $response = $this->actingAs($user)->get('/dashboard');
 
@@ -42,8 +59,10 @@ class HomeControllerTest extends TestCase
         $response->assertViewIs('dashboard');
 
         $quizzes = $response->viewData('quizzes');
-        $this->assertCount(1, $quizzes);
-        $this->assertEquals($publicQuizWithQuestions->id, $quizzes->first()->id);
-        $this->assertEquals(1, $quizzes->first()->questions_count);
+        
+        $this->assertCount(2, $quizzes);
+        $this->assertTrue($quizzes->contains($adminQuiz));
+        $this->assertTrue($quizzes->contains($userQuiz));
+        $this->assertFalse($quizzes->contains($otherUserQuiz));
     }
 }

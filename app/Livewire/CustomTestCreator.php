@@ -92,8 +92,8 @@ class CustomTestCreator extends Component
     public function mount(): void
     {
         $this->categories = Category::query()
+            ->has('questions')
             ->withCount('questions')
-            ->having('questions_count', '>', 0)
             ->orderBy('name')
             ->get();
 
@@ -158,6 +158,7 @@ class CustomTestCreator extends Component
             'description' => 'A custom practice test generated automatically.',
             'published' => true,
             'public' => false,
+            'user_id' => auth()->id(),
         ]);
 
         $this->distributeQuestions($adjustedQuotas, $targetQuiz);

@@ -59,6 +59,8 @@ class ManageQuizzes extends Component
                 'description' => $this->description,
                 'published' => $this->published,
                 'public' => $this->public,
+                'created_by' => \App\Enums\TestCreatedBy::Admin,
+                'user_id' => auth()->id(),
             ]
         );
 

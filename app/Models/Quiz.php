@@ -55,4 +55,15 @@ class Quiz extends Model
     {
         return $q->where('user_id', '!=', auth()->id());
     }
+
+    public function scopeAvailableFor($query, $user = null)
+    {
+        $userId = $user instanceof User ? $user->id : $user;
+        $userId ??= auth()->id();
+
+        return $query->where(function ($q) use ($userId) {
+            $q->where('created_by', \App\Enums\TestCreatedBy::Admin)
+              ->orWhere('user_id', $userId);
+        });
+    }
 }

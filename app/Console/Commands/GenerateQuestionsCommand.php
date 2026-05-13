@@ -15,17 +15,18 @@ class GenerateQuestionsCommand extends Command
                             {--target=100 : Total questions to generate per category}
                             {--delay=15 : Seconds to wait between API calls}';
 
-    protected $description = 'Generate programming questions for each existing category in batches using the Gemini API';
+    protected $description = 'Generate programming questions for each existing category in batches using the Opencode API';
 
-    public function handle()
+public function handle()
     {
         $batchSize = (int) $this->option('batch-size');
         $targetPerCategory = (int) $this->option('target');
         $delay = (int) $this->option('delay');
-        $apiKey = env('GEMINI_API_KEY');
+        $apiKey = env('OPENCODE_API_KEY');
+        $model = env('OPENCODE_MODEL', 'qwen3.6-plus');
 
         if (empty($apiKey)) {
-            $this->error('GEMINI_API_KEY is not set in the .env file.');
+            $this->error('OPENCODE_API_KEY is not set in the .env file.');
             return;
         }
 
@@ -80,24 +81,26 @@ class GenerateQuestionsCommand extends Command
                 2. For 'multi-answer', one or more options must be true.
                 3. Make sure the options array has between 2 and 5 items.";
 
-                $response = Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt]
-                            ]
+                try {
+                    $response = Http::withHeaders([
+                        'Content-Type' => 'application/json',
+                        'Authorization' => "Bearer {$apiKey}",
+                    ])->timeout(60)->post("https://opencode.ai/zen/go/v1/chat/completions", [
+                        'model' => $model,
+                        'messages' => [
+                            ['role' => 'user', 'content' => $prompt]
                         ]
-                    ],
-                    'generationConfig' => [
-                        'response_mime_type' => 'application/json',
-                    ]
-                ]);
+                    ]);
+                } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                    $this->error("Connection timeout for category {$category->name}. Retrying in {$delay} seconds...");
+                    $this->error($e->getMessage());
+                    sleep($delay);
+                    continue;
+                }
 
                 if ($response->failed()) {
                     $statusCode = $response->status();
-                    $this->error("Failed to connect to Gemini API for category {$category->name}. HTTP Status: {$statusCode}");
+                    $this->error("Failed to connect to Opencode API for category {$category->name}. HTTP Status: {$statusCode}");
                     $this->error($response->body());
                     
                     // If the API is overloaded (503) or rate limited (429), take a longer pause
@@ -112,17 +115,17 @@ class GenerateQuestionsCommand extends Command
 
                 $data = $response->json();
                 
-                if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+                if (!isset($data['choices'][0]['message']['content'])) {
                     $this->error('Unexpected API response format. Skipping batch...');
                     sleep($delay);
                     continue;
                 }
 
-                $jsonText = $data['candidates'][0]['content']['parts'][0]['text'];
+                $jsonText = $data['choices'][0]['message']['content'];
                 $questions = json_decode($jsonText, true);
 
                 if (json_last_error() !== JSON_ERROR_NONE || !is_array($questions)) {
-                    $this->error('Failed to parse JSON from Gemini API: ' . json_last_error_msg());
+                    $this->error('Failed to parse JSON from Opencode API: ' . json_last_error_msg());
                     $this->line($jsonText);
                     sleep($delay);
                     continue;

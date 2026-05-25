@@ -37,6 +37,22 @@
                                 <div class="border-t pt-6" x-show="step === {{ $index }}" x-cloak>
                                     <h3 class="text-lg font-semibold mb-3">{{ $question->question_text }}</h3>
                                     
+                                    @if($question->answer_explanation)
+                                        <div class="mt-6 p-4 bg-indigo-50 border-l-4 border-indigo-400 text-indigo-800 rounded-r-lg">
+                                            <p class="font-bold flex items-center text-sm uppercase tracking-wide">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                Explanation
+                                            </p>
+                                            <p class="mt-1 text-sm">{{ $question->answer_explanation }}</p>
+                                        </div>
+                                    @endif
+
+                                    @if($question->code_snippet)
+                                        <div class="mb-4 bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto font-mono text-sm">
+                                            <pre><code>{{ $question->code_snippet }}</code></pre>
+                                        </div>
+                                    @endif
+
                                     @if($question->type === \App\Enums\QuestionType::SingleLine)
                                         <x-text-input wire:model="answers.{{ $question->id }}" type="text" class="w-full mt-2" placeholder="Type your answer here..." />
                                     @elseif($question->type === \App\Enums\QuestionType::MultiLine)

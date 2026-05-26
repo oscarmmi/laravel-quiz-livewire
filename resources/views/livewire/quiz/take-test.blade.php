@@ -38,12 +38,28 @@
                                     <h3 class="text-lg font-semibold mb-3">{{ $question->question_text }}</h3>
                                     
                                     @if($question->answer_explanation)
-                                        <div class="mt-6 p-4 bg-indigo-50 border-l-4 border-indigo-400 text-indigo-800 rounded-r-lg">
-                                            <p class="font-bold flex items-center text-sm uppercase tracking-wide">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                Explanation
-                                            </p>
-                                            <p class="mt-1 text-sm">{{ $question->answer_explanation }}</p>
+                                        <div class="mt-6 border border-indigo-200 rounded-lg overflow-hidden" x-data="{ open: false }">
+                                            <button type="button" x-on:click="open = !open"
+                                                class="w-full flex items-center justify-between p-4 bg-indigo-50 hover:bg-indigo-100 transition-colors text-indigo-800 text-sm uppercase tracking-wide font-bold">
+                                                <span class="flex items-center">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    Explanation
+                                                </span>
+                                                <svg class="w-4 h-4 transition-transform duration-200" x-bind:class="open ? 'rotate-180' : ''"
+                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                </svg>
+                                            </button>
+                                            <div x-show="open"
+                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0"
+                                                x-transition:enter-end="opacity-100"
+                                                x-transition:leave="transition ease-in duration-150"
+                                                x-transition:leave-start="opacity-100"
+                                                x-transition:leave-end="opacity-0"
+                                                class="p-4 text-indigo-800 text-sm border-t border-indigo-200">
+                                                {{ $question->answer_explanation }}
+                                            </div>
                                         </div>
                                     @endif
 

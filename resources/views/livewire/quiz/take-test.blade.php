@@ -64,8 +64,8 @@
                                     @endif
 
                                     @if($question->code_snippet)
-                                        <div class="mb-4 bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto font-mono text-sm">
-                                            <pre><code>{{ $question->code_snippet }}</code></pre>
+                                        <div class="mb-4 rounded-lg overflow-hidden">
+                                            <pre class="!p-4 overflow-x-auto text-sm"><code>{{ $question->code_snippet }}</code></pre>
                                         </div>
                                     @endif
 

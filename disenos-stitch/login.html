@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Login | Kinetic Lab</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#fff1d7",
+                        "on-primary-container": "#245c00",
+                        "secondary-dim": "#00557a",
+                        "on-secondary-container": "#004c6e",
+                        "surface-bright": "#f8f6f5",
+                        "on-secondary": "#e9f4ff",
+                        "on-secondary-fixed": "#003852",
+                        "primary": "#2a6900",
+                        "outline-variant": "#aeadac",
+                        "surface-container-high": "#e4e2e2",
+                        "primary-fixed-dim": "#76ec33",
+                        "tertiary-container": "#fec700",
+                        "surface-container-low": "#f2f0f0",
+                        "surface-container": "#e9e8e7",
+                        "primary-dim": "#235b00",
+                        "surface-dim": "#d5d4d4",
+                        "secondary-fixed-dim": "#80ccff",
+                        "on-primary-fixed-variant": "#296700",
+                        "primary-fixed": "#84fb42",
+                        "on-secondary-fixed-variant": "#00567c",
+                        "tertiary-dim": "#644c00",
+                        "surface-variant": "#dedcdc",
+                        "secondary-fixed": "#a3d8ff",
+                        "surface": "#f8f6f5",
+                        "on-background": "#2e2f2f",
+                        "secondary-container": "#a3d8ff",
+                        "error-container": "#f95630",
+                        "error": "#b02500",
+                        "tertiary-fixed-dim": "#edba00",
+                        "secondary": "#00628c",
+                        "primary-container": "#84fb42",
+                        "on-tertiary-fixed": "#403000",
+                        "surface-container-highest": "#dedcdc",
+                        "inverse-primary": "#84fb42",
+                        "on-surface-variant": "#5c5b5b",
+                        "background": "#f8f6f5",
+                        "error-dim": "#b92902",
+                        "on-primary-fixed": "#1a4700",
+                        "on-error-container": "#520c00",
+                        "on-tertiary-container": "#574300",
+                        "surface-tint": "#2a6900",
+                        "inverse-surface": "#0e0e0e",
+                        "on-tertiary-fixed-variant": "#634c00",
+                        "on-surface": "#2e2f2f",
+                        "tertiary-fixed": "#fec700",
+                        "on-error": "#ffefec",
+                        "outline": "#777776",
+                        "inverse-on-surface": "#9e9d9c",
+                        "tertiary": "#725800",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#d5ffb9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "display": ["Plus Jakarta Sans"],
+                        "body": ["Be Vietnam Pro"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .tactile-shadow {
+            box-shadow: 0 4px 0 0 rgba(174, 173, 172, 0.4);
+        }
+
+        .button-press:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 0 rgba(174, 173, 172, 0.4);
+        }
+
+        .primary-button-press:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 0 #296700;
+        }
+
+        .bg-mesh {
+            background-color: #f8f6f5;
+            background-image: radial-gradient(at 0% 0%, rgba(132, 251, 66, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(163, 216, 255, 0.1) 0px, transparent 50%);
+        }
+    </style>
+</head>
+
+<body class="bg-mesh font-body text-on-surface min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- Login Container -->
+    <main class="w-full max-w-md">
+        <!-- Mascot Entrance -->
+        <div class="flex flex-col items-center mb-8 relative">
+            <div class="w-32 h-32 mb-4 drop-shadow-xl animate-bounce" style="animation-duration: 3s;">
+                <img alt="Kinetic Lab Mascot" class="w-full h-full object-contain"
+                    data-alt="A friendly and cute green robot mascot with rounded proportions and large expressive eyes. The robot is designed in a vibrant Duolingo-style 3D aesthetic with soft matte textures and high-key lighting. It features lime green and emerald accents, standing in a welcoming pose against a minimalist light grey background that emphasizes its playful and high-energy personality."
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz8FplEuBWoNH5ngoaXi6p5AI4ipkp3h0QfvFWFK7W92VvQqAm6hV3ct5HIz0ee0OG1q9H5SaFkR_C8Ob0l6OQ4Lw4L2R5YfHlllKfs5vf9WszhW0T58ennbyCAhGDOgR1IAzxi04GrHDf92K4sbfPJ2QQZsVP6_z50OnEPov80hK48sXRGcibx9csb5IFOn18lSnuba9JxRlapGA3kaNyU18-XPtEQCSXYATWLY_vi_VB38lAav0wIHCNFcIY4FtqiGbmzz1wTg" />
+            </div>
+            <div class="bg-surface-container-lowest tactile-shadow rounded-lg px-6 py-3 relative">
+                <h1 class="font-display font-extrabold text-headline-md tracking-tight text-primary">Welcome Back!</h1>
+                <!-- Speech bubble tail -->
+                <div
+                    class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-surface-container-lowest rotate-45 border-l border-t border-outline-variant/20">
+                </div>
+            </div>
+        </div>
+        <!-- Login Card -->
+        <section class="bg-surface-container-lowest rounded-lg p-8 tactile-shadow border-2 border-outline-variant/10">
+            <form class="space-y-6" onsubmit="event.preventDefault()">
+                <!-- Email Field -->
+                <div class="space-y-2">
+                    <label class="font-label font-bold text-on-surface-variant flex items-center gap-2" for="email">
+                        <span class="material-symbols-outlined text-[20px]">mail</span>
+                        EMAIL
+                    </label>
+                    <input
+                        class="w-full bg-surface-container-low border-2 border-outline-variant/40 rounded-lg px-4 py-4 focus:outline-none focus:border-secondary focus:ring-0 transition-all font-medium text-body-lg"
+                        id="email" placeholder="Enter your email" type="email" />
+                </div>
+                <!-- Password Field -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label class="font-label font-bold text-on-surface-variant flex items-center gap-2"
+                            for="password">
+                            <span class="material-symbols-outlined text-[20px]">lock</span>
+                            PASSWORD
+                        </label>
+                        <a class="font-label font-bold text-secondary hover:text-secondary-dim transition-colors"
+                            href="#">FORGOT?</a>
+                    </div>
+                    <input
+                        class="w-full bg-surface-container-low border-2 border-outline-variant/40 rounded-lg px-4 py-4 focus:outline-none focus:border-secondary focus:ring-0 transition-all font-medium text-body-lg"
+                        id="password" placeholder="Enter your password" type="password" />
+                </div>
+                <!-- Primary Login Action -->
+                <button
+                    class="w-full bg-primary text-on-primary font-display font-extrabold text-lg py-4 rounded-xl shadow-[0_4px_0_0_#296700] hover:bg-primary-dim primary-button-press transition-all uppercase tracking-wider"
+                    type="submit">
+                    LOG IN
+                </button>
+                <!-- Divider -->
+                <div class="flex items-center gap-4 my-8">
+                    <div class="h-[2px] flex-1 bg-outline-variant/20"></div>
+                    <span class="font-label font-bold text-outline">OR</span>
+                    <div class="h-[2px] flex-1 bg-outline-variant/20"></div>
+                </div>
+                <!-- Social Logins -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button
+                        class="flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-outline-variant/40 bg-surface hover:bg-surface-container-high tactile-shadow button-press transition-all font-bold text-on-surface-variant"
+                        type="button">
+                        <img alt="Google" class="w-5 h-5"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF0PHd7THvtVNcC5dOhWcHBP_XZ-BvtJRX4UpFpBhWdGMqocoW70tp0BRuyC8TeVYUfv8KjTEq-ZbIsIlkLNwbGFTRV05y2oCAP6TBPsWE57cSLjieyGPX3UiRPmrYBj6P5tdW3NVPl6w948ZEbyqG7lhtZSNX6kUrnUkRx2qX8MZDNVRnevItnjpaZ6fIjXg5bM5jTN2dx1S2FXvDovxpWzN1qJr1_YRTWRvZ4py1Z3JH208VKIYBmvQ3ZhUIqSjdtI4Jex98RQ" />
+                        GOOGLE
+                    </button>
+                    <button
+                        class="flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-outline-variant/40 bg-surface hover:bg-surface-container-high tactile-shadow button-press transition-all font-bold text-on-surface-variant"
+                        type="button">
+                        <img alt="GitHub" class="w-5 h-5"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4-1yW62gVIRp5gNcArTn7nuhddmh2nxFxEhObw42DZTDiUehDMj7cvU5Rx7xnENbfxUgNkKttVTDc0G9dRAUECQenBAAxc7F8ZIAlOrG8ps670YxRGSP3OHXPFXJwVDX_8yn_mZis0EreZ5nqvoDpPhG7QxH1PJn_iWnzSHtrSh5CPxrlxyPOlpQmsTaxAxJBMGi76zijyPk1xL-2txXyVCew_ejLE_WnvzKwFq07vwlghrJsPxX68oRMtq4DESEOfUnb1lqXjg" />
+                        GITHUB
+                    </button>
+                </div>
+            </form>
+        </section>
+        <!-- Footer Link -->
+        <p class="mt-8 text-center font-medium text-on-surface-variant">
+            Don't have an account?
+            <a class="text-primary font-bold hover:underline decoration-2 underline-offset-4" href="#">Sign up</a>
+        </p>
+    </main>
+    <!-- Visual Accents -->
+    <div class="fixed bottom-10 left-10 hidden lg:block opacity-20 pointer-events-none">
+        <span class="material-symbols-outlined text-[80px] text-primary"
+            style="font-variation-settings: 'FILL' 1;">code</span>
+    </div>
+    <div class="fixed top-10 right-10 hidden lg:block opacity-20 pointer-events-none">
+        <span class="material-symbols-outlined text-[80px] text-secondary"
+            style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+    </div>
+    <!-- Micro-interaction Script -->
+    <script>
+        // Subtle hover effect for the mascot
+        const mascot = document.querySelector('.animate-bounce');
+        mascot.addEventListener('mouseenter', () => {
+            mascot.style.animationPlayState = 'paused';
+            mascot.style.transform = 'scale(1.1) rotate(5deg)';
+            mascot.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        });
+        mascot.addEventListener('mouseleave', () => {
+            mascot.style.animationPlayState = 'running';
+            mascot.style.transform = 'scale(1) rotate(0deg)';
+        });
+
+        // Input Focus Ripple Effect
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.querySelector('label').classList.add('text-secondary');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.querySelector('label').classList.remove('text-secondary');
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,15 +1,15 @@
-<nav class="-mx-3 flex flex-1 justify-end">
+<nav class="flex items-center gap-3">
     @auth
         <a
             href="{{ url('/dashboard') }}"
-            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+            class="bg-primary text-on-primary px-6 py-2 rounded-full font-bold tactile-button-primary uppercase tracking-widest text-xs transition-all active:scale-95"
         >
             Dashboard
         </a>
     @else
         <a
             href="{{ route('login') }}"
-            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+            class="text-primary font-bold text-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors px-4 py-2 rounded-full"
         >
             Log in
         </a>
@@ -17,7 +17,7 @@
         @if (Route::has('register'))
             <a
                 href="{{ route('register') }}"
-                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                class="bg-primary text-on-primary px-6 py-2 rounded-full font-bold tactile-button-primary uppercase tracking-widest text-xs transition-all active:scale-95"
             >
                 Register
             </a>
